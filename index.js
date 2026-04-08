@@ -1,9 +1,14 @@
-const TelegramBot = require('node-telegram-bot-api');
-const { createCanvas, loadImage, registerFont } = require('canvas');
-const fs = require('fs');
-const path = require('path');
-const pdf = require('pdf-parse');
-const QRCode = require('qrcode');
+import TelegramBot from 'node-telegram-bot-api';
+import pkg from 'canvas';
+const { createCanvas, loadImage, registerFont } = pkg;
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import QRCode from 'qrcode';
+
+// Fix for __dirname in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // 1. CONFIGURATION
 const token = process.env.TELEGRAM_BOT_TOKEN;
@@ -27,11 +32,9 @@ async function generateIdCard(data, photoPath) {
     ctx.drawImage(template, 0, 0);
 
     // --- FRONT SIDE (Left) ---
-    
     // Photo Placement (Centered in the white box)
     if (photoPath && fs.existsSync(photoPath)) {
         const photoImg = await loadImage(photoPath);
-        // Adjusted to fit the white border area properly
         ctx.drawImage(photoImg, 78, 108, 105, 130); 
     }
 
@@ -53,7 +56,7 @@ async function generateIdCard(data, photoPath) {
     ctx.fillText("ወንድ | Male", 195, 235);
 
     // --- BACK SIDE (Right) ---
-    const bx = 640; // Horizontal start for the back side
+    const bx = 640; 
 
     // Phone Number
     ctx.font = 'bold 14px Arial';
@@ -80,7 +83,6 @@ bot.on('message', async (msg) => {
         bot.sendMessage(chatId, "📥 Processing your Fayda PDF...");
 
         try {
-            // Placeholder data for testing (in real usage, you parse the PDF here)
             const userData = {
                 nameAmharic: "አዱኛ ተሸመ ተስፋይ",
                 nameEnglish: "Adugna Tesheme Tesfay",
